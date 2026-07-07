@@ -11,14 +11,25 @@ import (
 
 var ErrRecordNotFound = errors.New("record not found")
 
-func ListUsers() ([]model.User, error) {
+func ListUsers(keyword string, page int, size int) ([]model.User, int64, error) {
 	var users []model.User
+	var total int64
 
-	if err := database.DB.Find(&users).Error; err != nil {
-		return nil, err
+	db := database.DB.Model(&model.User{})
+	if keyword != "" {
+		db = db.Where("name LIKE ?", "%"+keyword+"%")
 	}
 
-	return users, nil
+	if err := db.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	offset := (page - 1) * size
+	if err := db.Limit(size).Offset(offset).Find(&users).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return users, total, nil
 }
 
 func GetUserByID(id uint) (model.User, error) {
