@@ -1,0 +1,4 @@
+.gocache/
+*.db
+*.sqlite
+*.sqlite3
