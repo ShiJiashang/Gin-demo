@@ -17,3 +17,16 @@ type UserResponse struct {
 	Age  int    `json:"age"`
 	Role string `json:"role"`
 }
+
+type UserListQuery struct {
+	Page    int    `form:"page"`
+	Size    int    `form:"size"`
+	Keyword string `form:"keyword"`
+}
+
+type UserListResponse struct {
+	Items []UserResponse `json:"items"`
+	Total int64          `json:"total"`
+	Page  int            `json:"page"`
+	Size  int            `json:"size"`
+}
