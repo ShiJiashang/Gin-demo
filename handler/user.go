@@ -20,10 +20,11 @@ func Login(c *gin.Context) {
 		response.Fail(c, http.StatusBadRequest, 40001, err.Error())
 		return
 	}
-	config := config.Load()
-	loginResponse, err := service.Login(req, config.JWTSecret, config.JWTExpire)
+
+	cfg := config.Load()
+	loginResponse, err := service.Login(req, cfg.JWTSecret, cfg.JWTExpire)
 	if err != nil {
-		response.Fail(c, http.StatusBadRequest, 40001, err.Error())
+		handleLoginError(c, err)
 		return
 	}
 
@@ -138,6 +139,15 @@ func handleUserError(c *gin.Context, err error) {
 
 	if errors.Is(err, service.ErrInvalidAge) {
 		response.Fail(c, http.StatusBadRequest, 40002, "invalid age")
+		return
+	}
+
+	response.Fail(c, http.StatusInternalServerError, 50001, "server error")
+}
+
+func handleLoginError(c *gin.Context, err error) {
+	if errors.Is(err, service.ErrUserNotFound) || errors.Is(err, service.ErrInvalidPassword) {
+		response.Fail(c, http.StatusUnauthorized, 40104, "invalid name or password")
 		return
 	}
 
