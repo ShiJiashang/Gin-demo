@@ -57,10 +57,15 @@ func CreateUser(req dto.CreateUserRequest) (dto.UserResponse, error) {
 		return dto.UserResponse{}, ErrNameExists
 	}
 
+	hashedPassword, err := auth.HashPassword(req.Password)
+	if err != nil {
+		return dto.UserResponse{}, err
+	}
+
 	user := model.User{
 		Name:     req.Name,
 		Age:      req.Age,
-		Password: req.Password,
+		Password: hashedPassword,
 		Role:     "user",
 	}
 
@@ -138,7 +143,7 @@ func Login(req dto.LoginRequest, secret string, duration time.Duration) (dto.Log
 
 		return dto.LoginResponse{}, err
 	}
-	if user.Password != req.Password {
+	if !auth.CheckPassword(req.Password, user.Password) {
 		return dto.LoginResponse{}, ErrInvalidPassword
 	}
 
