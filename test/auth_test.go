@@ -100,13 +100,13 @@ func TestGetUsers(t *testing.T) {
 	if err := json.Unmarshal(w.Body.Bytes(), &wrap); err != nil {
 		t.Fatalf("Failed to parse response body: %v", err)
 	}
-	var users []dto.UserResponse
-	if err := json.Unmarshal(wrap.Data, &users); err != nil {
+	var userList dto.UserListResponse
+	if err := json.Unmarshal(wrap.Data, &userList); err != nil {
 		t.Fatalf("Failed to parse response data: %v", err)
 	}
 
 	found := false
-	for _, it := range users {
+	for _, it := range userList.Items {
 		t.Logf("User %s found", it.Name)
 		if it.Name == "test" {
 			found = true
