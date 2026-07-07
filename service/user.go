@@ -17,18 +17,30 @@ var (
 	ErrInvalidPassword = errors.New("invalid password")
 )
 
-func ListUsers() ([]dto.UserResponse, error) {
-	users, err := repository.ListUsers()
+func ListUsers(query dto.UserListQuery) (dto.UserListResponse, error) {
+	if query.Page <= 0 {
+		query.Page = 1
+	}
+	if query.Size <= 0 {
+		query.Size = 10
+	}
+
+	users, total, err := repository.ListUsers(query.Keyword, query.Page, query.Size)
 	if err != nil {
-		return nil, err
+		return dto.UserListResponse{}, err
 	}
 
-	result := make([]dto.UserResponse, 0, len(users))
+	items := make([]dto.UserResponse, 0, len(users))
 	for _, user := range users {
-		result = append(result, toUserResponse(user))
+		items = append(items, toUserResponse(user))
 	}
 
-	return result, nil
+	return dto.UserListResponse{
+		Items: items,
+		Total: total,
+		Page:  query.Page,
+		Size:  query.Size,
+	}, nil
 }
 
 func GetUserByID(id uint) (dto.UserResponse, error) {
