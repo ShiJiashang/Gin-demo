@@ -2,6 +2,7 @@ package test
 
 import (
 	"encoding/json"
+	"fmt"
 	"gin_gorm_demo/database"
 	"gin_gorm_demo/dto"
 	"gin_gorm_demo/handler"
@@ -19,16 +20,25 @@ import (
 var token string
 
 func TestMain(m *testing.M) {
-	if err := database.Init("../gin-demo.db"); err != nil {
+	dbPath := fmt.Sprintf("%s/gin-gorm-demo-test.db", os.TempDir())
+	_ = os.Remove(dbPath)
+
+	if err := database.Init(dbPath); err != nil {
 		log.Fatalf("failed to init database: %v", err)
 	}
-	os.Exit(m.Run())
+
+	code := m.Run()
+	_ = os.Remove(dbPath)
+	os.Exit(code)
 }
 
 func TestLogin(t *testing.T) {
 	// 使用httptest测试登陆接口
 	r := gin.Default()
+	r.POST("/users", handler.CreateUser)
 	r.POST("/login", handler.Login)
+
+	createTestUser(t, r)
 
 	payload := dto.LoginRequest{
 		Name:     "test",
@@ -107,4 +117,28 @@ func TestGetUsers(t *testing.T) {
 		t.Errorf("User %s not found", "test")
 	}
 
+}
+
+func createTestUser(t *testing.T, r *gin.Engine) {
+	t.Helper()
+
+	payload := dto.CreateUserRequest{
+		Name:     "test",
+		Age:      18,
+		Password: "123456",
+	}
+
+	jsonPayload, err := json.Marshal(payload)
+	if err != nil {
+		t.Fatalf("Failed to marshal create user payload: %v", err)
+	}
+
+	req := httptest.NewRequest("POST", "/users", strings.NewReader(string(jsonPayload)))
+	req.Header.Set("Content-Type", "application/json")
+
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+	if w.Code != http.StatusOK {
+		t.Fatalf("Expected create user status code %d, got %d, body=%s", http.StatusOK, w.Code, w.Body.String())
+	}
 }
