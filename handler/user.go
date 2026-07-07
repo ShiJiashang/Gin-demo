@@ -38,7 +38,13 @@ func GetAuthorizedUsers(c *gin.Context) {
 }
 
 func GetUsers(c *gin.Context) {
-	users, err := service.ListUsers()
+	var query dto.UserListQuery
+	if err := c.ShouldBindQuery(&query); err != nil {
+		response.Fail(c, http.StatusBadRequest, 40001, err.Error())
+		return
+	}
+
+	users, err := service.ListUsers(query)
 	if err != nil {
 		response.Fail(c, http.StatusInternalServerError, 50001, "server error")
 		return
