@@ -1,0 +1,9 @@
+.git
+.gitignore
+.gocache
+*.db
+*.sqlite
+*.sqlite3
+formdemo
+nginx-demo
+test

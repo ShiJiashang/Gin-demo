@@ -11,7 +11,7 @@ import (
 
 var ErrRecordNotFound = errors.New("record not found")
 
-func ListUsers(keyword string, page int, size int) ([]model.User, int64, error) {
+func ListUsers(keyword string, page int, size int, sort string, order string) ([]model.User, int64, error) {
 	var users []model.User
 	var total int64
 
@@ -24,8 +24,21 @@ func ListUsers(keyword string, page int, size int) ([]model.User, int64, error) 
 		return nil, 0, err
 	}
 
+	allowedSort := map[string]string{
+		"id":         "id",
+		"age":        "age",
+		"created_at": "created_at",
+	}
+	sortColumn, ok := allowedSort[sort]
+	if !ok {
+		sortColumn = "id"
+	}
+	if order != "asc" && order != "desc" {
+		order = "desc"
+	}
+
 	offset := (page - 1) * size
-	if err := db.Limit(size).Offset(offset).Find(&users).Error; err != nil {
+	if err := db.Order(sortColumn + " " + order).Limit(size).Offset(offset).Find(&users).Error; err != nil {
 		return nil, 0, err
 	}
 
