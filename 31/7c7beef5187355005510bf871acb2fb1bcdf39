@@ -1,0 +1,16 @@
+test/auth_test.go
+  h_bc9edf9dff577b 64,83-84
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "317c7beef5187355005510bf871acb2fb1bcdf39",
+  "prompts": {},
+  "humans": {
+    "h_bc9edf9dff577b": {
+      "author": "“shijiashang” <shijiashang@bytedance.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
