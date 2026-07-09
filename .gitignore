@@ -1,5 +1,9 @@
 .gocache/
+gin-demo
+formdemo/request_dumps/
+nginx-demo/logs/
+nginx-demo/client_body_temp/
+nginx-demo/proxy_temp/
 *.db
 *.sqlite
 *.sqlite3
-

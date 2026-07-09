@@ -22,6 +22,8 @@ type UserListQuery struct {
 	Page    int    `form:"page"`
 	Size    int    `form:"size"`
 	Keyword string `form:"keyword"`
+	Sort    string `form:"sort"`
+	Order   string `form:"order"`
 }
 
 type UserListResponse struct {
@@ -29,4 +31,6 @@ type UserListResponse struct {
 	Total int64          `json:"total"`
 	Page  int            `json:"page"`
 	Size  int            `json:"size"`
+	Sort  string         `json:"sort"`
+	Order string         `json:"order"`
 }

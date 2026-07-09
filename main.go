@@ -14,6 +14,16 @@ import (
 	"gin_gorm_demo/router"
 )
 
+// @title Gin GORM Demo API
+// @version 1.0
+// @description A learning API built with Gin, GORM, JWT, and SQLite.
+// @host localhost:8080
+// @BasePath /api/v1
+// @schemes http
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Type "Bearer " followed by your JWT token.
 func main() {
 	cfg := config.Load()
 

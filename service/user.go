@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"strings"
 	"time"
 
 	"gin_gorm_demo/auth"
@@ -24,8 +25,18 @@ func ListUsers(query dto.UserListQuery) (dto.UserListResponse, error) {
 	if query.Size <= 0 {
 		query.Size = 10
 	}
+	if query.Size > 100 {
+		query.Size = 100
+	}
+	if query.Sort == "" {
+		query.Sort = "id"
+	}
+	query.Order = strings.ToLower(query.Order)
+	if query.Order != "asc" && query.Order != "desc" {
+		query.Order = "desc"
+	}
 
-	users, total, err := repository.ListUsers(query.Keyword, query.Page, query.Size)
+	users, total, err := repository.ListUsers(query.Keyword, query.Page, query.Size, query.Sort, query.Order)
 	if err != nil {
 		return dto.UserListResponse{}, err
 	}
@@ -40,6 +51,8 @@ func ListUsers(query dto.UserListQuery) (dto.UserListResponse, error) {
 		Total: total,
 		Page:  query.Page,
 		Size:  query.Size,
+		Sort:  query.Sort,
+		Order: query.Order,
 	}, nil
 }
 

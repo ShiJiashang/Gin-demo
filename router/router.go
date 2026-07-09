@@ -3,12 +3,14 @@ package router
 import (
 	"time"
 
+	_ "gin_gorm_demo/docs"
 	"gin_gorm_demo/handler"
-
 	"gin_gorm_demo/middleware"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func SetupRouter() *gin.Engine {
@@ -34,6 +36,8 @@ func SetupRouter() *gin.Engine {
 		},
 		MaxAge: 12 * time.Hour,
 	}))
+
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	api := r.Group("/api/v1")
 	{
